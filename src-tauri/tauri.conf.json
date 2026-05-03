@@ -13,6 +13,8 @@
         "title": "noted",
         "width": 340,
         "height": 440,
+        "minWidth": 340,
+        "minHeight": 440,
         "decorations": false,
         "transparent": true,
         "center": true
