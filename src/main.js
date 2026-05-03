@@ -7,7 +7,7 @@ import {
   validateAntinoteTheme
 } from './themes.js';
 
-const { invoke } = window.__TAURI__.core;
+const { invoke, Channel } = window.__TAURI__.core;
 const { getCurrentWindow } = window.__TAURI__.window;
 const appWindow = getCurrentWindow();
 
@@ -365,6 +365,7 @@ async function checkForUpdates() {
       }, 3000);
     }
   } catch (err) {
+    console.error('Update check failed:', err);
     updateBtn.textContent = 'Could not check';
     updateBtn.disabled = true;
     setTimeout(() => {
@@ -379,8 +380,12 @@ updateBtn?.addEventListener('click', async () => {
     try {
       updateBtn.textContent = 'Installing…';
       updateBtn.disabled = true;
-      await invoke('plugin:updater|download_and_install', { rid: updateAvailable.rid });
+      await invoke('plugin:updater|download_and_install', {
+        onEvent: new Channel(),
+        rid: updateAvailable.rid
+      });
     } catch (err) {
+      console.error('Update install failed:', err);
       updateBtn.textContent = 'Install failed';
       updateBtn.disabled = false;
       updateBtn.classList.remove('install');
