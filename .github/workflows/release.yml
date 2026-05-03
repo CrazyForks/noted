@@ -105,12 +105,12 @@ jobs:
           if [ -n "$TAURI_SIGNING_PRIVATE_KEY" ]; then
             DEB_FILE=$(ls deb/*.deb 2>/dev/null | head -1)
             if [ -n "$DEB_FILE" ]; then
-              LINUX_SIG=$(npx tauri signer sign --private-key "$TAURI_SIGNING_PRIVATE_KEY" "$DEB_FILE" || true)
+              LINUX_SIG=$(npx tauri signer sign --private-key "$TAURI_SIGNING_PRIVATE_KEY" "$DEB_FILE" | tail -1)
             fi
 
             MSI_FILE=$(ls msi/*.msi 2>/dev/null | head -1)
             if [ -n "$MSI_FILE" ]; then
-              WIN_SIG=$(npx tauri signer sign --private-key "$TAURI_SIGNING_PRIVATE_KEY" "$MSI_FILE" || true)
+              WIN_SIG=$(npx tauri signer sign --private-key "$TAURI_SIGNING_PRIVATE_KEY" "$MSI_FILE" | tail -1)
             fi
           fi
 
