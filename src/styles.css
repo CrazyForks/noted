@@ -479,15 +479,28 @@ html, body {
   margin-top: auto;
 }
 
-.settings-update-label {
+.settings-update-btn {
+  border: none;
+  background: none;
   color: var(--theme-type-main);
   font: 500 12px/1 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
   cursor: pointer;
+  padding: 0;
   transition: color 0.15s ease;
 }
 
-.settings-update-label:hover {
+.settings-update-btn:hover {
   color: var(--theme-accent-main);
+}
+
+.settings-update-btn:disabled {
+  color: var(--theme-type-light);
+  cursor: default;
+}
+
+.settings-update-btn.install {
+  color: var(--theme-accent-main);
+  font-weight: 600;
 }
 
 .settings-update-version {

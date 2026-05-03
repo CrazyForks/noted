@@ -341,6 +341,58 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+// ── Updater ──
+
+const updateBtn = document.getElementById('update-btn');
+const updateVersion = document.getElementById('update-version');
+let updateAvailable = null;
+
+async function checkForUpdates() {
+  try {
+    const { checkUpdate, installUpdate } = await import('@tauri-apps/plugin-updater');
+    const update = await checkUpdate();
+
+    if (update?.available) {
+      updateAvailable = update;
+      updateBtn.textContent = 'Install Update';
+      updateBtn.classList.add('install');
+      updateVersion.textContent = update.version ? `v${update.version}` : 'v0.1.0';
+    } else {
+      updateBtn.textContent = 'Up to date';
+      updateBtn.disabled = true;
+      setTimeout(() => {
+        updateBtn.textContent = 'Check for Updates';
+        updateBtn.disabled = false;
+      }, 3000);
+    }
+  } catch (err) {
+    updateBtn.textContent = 'Could not check';
+    updateBtn.disabled = true;
+    setTimeout(() => {
+      updateBtn.textContent = 'Check for Updates';
+      updateBtn.disabled = false;
+    }, 3000);
+  }
+}
+
+updateBtn?.addEventListener('click', async () => {
+  if (updateAvailable) {
+    try {
+      const { installUpdate } = await import('@tauri-apps/plugin-updater');
+      updateBtn.textContent = 'Installing…';
+      updateBtn.disabled = true;
+      await installUpdate();
+    } catch (err) {
+      updateBtn.textContent = 'Install failed';
+      updateBtn.disabled = false;
+      updateBtn.classList.remove('install');
+      updateAvailable = null;
+    }
+  } else {
+    checkForUpdates();
+  }
+});
+
 // ── Init ──
 
 window.addEventListener('DOMContentLoaded', () => {
