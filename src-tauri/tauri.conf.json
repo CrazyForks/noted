@@ -11,8 +11,11 @@
     "windows": [
       {
         "title": "noted",
-        "width": 350,
-        "height": 500
+        "width": 340,
+        "height": 440,
+        "decorations": false,
+        "transparent": true,
+        "center": true
       }
     ],
     "security": {
