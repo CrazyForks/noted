@@ -16,6 +16,7 @@ const appWindow = getCurrentWindow();
 let notes = [];
 let currentIndex = 0;
 let saveTimeout = null;
+let pendingSave = Promise.resolve();
 let animating = false;
 let themes = [];
 let activeTheme = null;
@@ -223,18 +224,45 @@ function updateIndicator() {
 
 // ── Save ──
 
-function saveCurrentNote() {
+async function saveCurrentNote() {
+  if (saveTimeout) {
+    clearTimeout(saveTimeout);
+    saveTimeout = null;
+  }
+
   const note = notes[currentIndex];
-  if (!note) return;
+  if (!note) return pendingSave;
+
   const content = canvas.value;
-  notes[currentIndex].content = content;
-  invoke('save_note', { id: note.id, content });
+  const noteIndex = currentIndex;
+  notes[noteIndex].content = content;
+
+  pendingSave = pendingSave
+    .catch(() => {})
+    .then(() => invoke('save_note', { id: note.id, content }))
+    .catch((error) => {
+      console.error('Save failed:', error);
+      throw error;
+    });
+
+  return pendingSave;
 }
 
 function scheduleSave() {
   if (saveTimeout) clearTimeout(saveTimeout);
-  saveTimeout = setTimeout(() => saveCurrentNote(), 300);
+  saveTimeout = setTimeout(() => {
+    saveCurrentNote().catch(() => {});
+  }, 300);
   undoManager.activity();
+}
+
+async function flushPendingSave() {
+  if (saveTimeout) {
+    await saveCurrentNote();
+    return;
+  }
+
+  await pendingSave;
 }
 
 // ── Animation helper ──
@@ -274,6 +302,7 @@ function animateSwap(outClass, inClass, newContent) {
 async function deleteIfEmpty() {
   const content = canvas.value.trim();
   if (content === '' && notes.length > 1) {
+    await flushPendingSave();
     const note = notes[currentIndex];
     undoManager.forget(note.id);
     await invoke('delete_note', { id: note.id });
@@ -298,14 +327,14 @@ async function slideToNext() {
   }
 
   if (currentIndex >= notes.length - 1) {
-    saveCurrentNote();
+    await saveCurrentNote();
     const newNote = await invoke('create_note');
     notes.push(newNote);
     prepareForNoteSwitch(newNote.id);
     currentIndex = notes.length - 1;
     await animateSwap('slide-left-out', 'slide-left-in', '');
   } else {
-    saveCurrentNote();
+    await saveCurrentNote();
     prepareForNoteSwitch(notes[currentIndex + 1].id);
     currentIndex++;
     await animateSwap('slide-left-out', 'slide-left-in', notes[currentIndex].content);
@@ -325,7 +354,7 @@ async function slideToPrev() {
     return;
   }
 
-  saveCurrentNote();
+  await saveCurrentNote();
   prepareForNoteSwitch(notes[currentIndex - 1].id);
   currentIndex--;
   await animateSwap('slide-right-out', 'slide-right-in', notes[currentIndex].content);
@@ -378,17 +407,17 @@ document.addEventListener('keydown', (e) => {
   // Undo / Redo
   if (mod && !e.shiftKey && (e.key === 'z' || e.key === 'Z')) {
     e.preventDefault();
-    if (undoManager.undo()) saveCurrentNote();
+    if (undoManager.undo()) saveCurrentNote().catch(() => {});
     return;
   }
   if (mod && e.shiftKey && (e.key === 'z' || e.key === 'Z')) {
     e.preventDefault();
-    if (undoManager.redo()) saveCurrentNote();
+    if (undoManager.redo()) saveCurrentNote().catch(() => {});
     return;
   }
   if (mod && !e.shiftKey && (e.key === 'y' || e.key === 'Y')) {
     e.preventDefault();
-    if (undoManager.redo()) saveCurrentNote();
+    if (undoManager.redo()) saveCurrentNote().catch(() => {});
     return;
   }
 
