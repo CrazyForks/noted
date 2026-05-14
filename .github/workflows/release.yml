@@ -29,25 +29,34 @@ jobs:
       - run: npm install
 
       - name: Build
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""
         run: npx tauri build
 
       - name: Upload deb
         uses: actions/upload-artifact@v4
         with:
           name: deb
-          path: src-tauri/target/release/bundle/deb/*.deb
+          path: |
+            src-tauri/target/release/bundle/deb/*.deb
+            src-tauri/target/release/bundle/deb/*.sig
 
       - name: Upload AppImage
         uses: actions/upload-artifact@v4
         with:
           name: appimage
-          path: src-tauri/target/release/bundle/appimage/*.AppImage
+          path: |
+            src-tauri/target/release/bundle/appimage/*.AppImage
+            src-tauri/target/release/bundle/appimage/*.sig
 
       - name: Upload rpm
         uses: actions/upload-artifact@v4
         with:
           name: rpm
-          path: src-tauri/target/release/bundle/rpm/*.rpm
+          path: |
+            src-tauri/target/release/bundle/rpm/*.rpm
+            src-tauri/target/release/bundle/rpm/*.sig
 
   build-windows:
     name: Windows (.msi)
@@ -64,13 +73,18 @@ jobs:
       - run: npm install
 
       - name: Build
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""
         run: npx tauri build
 
       - name: Upload msi
         uses: actions/upload-artifact@v4
         with:
           name: msi
-          path: src-tauri/target/release/bundle/msi/*.msi
+          path: |
+            src-tauri/target/release/bundle/msi/*.msi
+            src-tauri/target/release/bundle/msi/*.sig
 
   release:
     name: Attach to Release
@@ -78,9 +92,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    env:
-      TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-      TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""
     steps:
       - uses: actions/checkout@v4
         with:
@@ -100,6 +111,8 @@ jobs:
           VERSION="${TAG#v}"
           DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
+          LINUX_SIG_FILE=""
+          WIN_SIG_FILE=""
           LINUX_SIG=""
           WIN_SIG=""
           DEB_BASENAME=""
@@ -117,14 +130,25 @@ jobs:
             MSI_BASENAME=$(basename "$MSI_FILE")
           fi
 
-          if [ -n "$TAURI_SIGNING_PRIVATE_KEY" ]; then
-            if [ -n "$DEB_FILE" ]; then
-              LINUX_SIG=$(npx tauri signer sign --private-key "$TAURI_SIGNING_PRIVATE_KEY" -p "" "$DEB_FILE" 2>&1 | grep -A1 "Public signature:" | tail -1)
-            fi
+          if [ -n "$DEB_FILE" ]; then
+            LINUX_SIG_FILE="${DEB_FILE}.sig"
+          fi
+          if [ -n "$MSI_FILE" ]; then
+            WIN_SIG_FILE="${MSI_FILE}.sig"
+          fi
 
-            if [ -n "$MSI_FILE" ]; then
-              WIN_SIG=$(npx tauri signer sign --private-key "$TAURI_SIGNING_PRIVATE_KEY" -p "" "$MSI_FILE" 2>&1 | grep -A1 "Public signature:" | tail -1)
-            fi
+          if [ -f "$LINUX_SIG_FILE" ]; then
+            LINUX_SIG=$(cat "$LINUX_SIG_FILE")
+          else
+            echo "Missing Linux updater signature: ${LINUX_SIG_FILE}" >&2
+            exit 1
+          fi
+
+          if [ -f "$WIN_SIG_FILE" ]; then
+            WIN_SIG=$(cat "$WIN_SIG_FILE")
+          else
+            echo "Missing Windows updater signature: ${WIN_SIG_FILE}" >&2
+            exit 1
           fi
 
           cat > latest.json << EOF
@@ -152,9 +176,13 @@ jobs:
         with:
           files: |
             deb/*.deb
+            deb/*.sig
             appimage/*.AppImage
+            appimage/*.sig
             rpm/*.rpm
+            rpm/*.sig
             msi/*.msi
+            msi/*.sig
             latest.json
           generate_release_notes: true
 

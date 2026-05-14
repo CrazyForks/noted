@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "noted",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "identifier": "com.khurram.noted",
   "build": {
     "frontendDist": "../src"
@@ -26,12 +26,13 @@
   },
   "plugins": {
     "updater": {
-      "endpoints": ["https://raw.githubusercontent.com/khurrambhutto/noted/main/latest.json"],
+      "endpoints": ["https://github.com/khurrambhutto/noted/releases/latest/download/latest.json"],
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDM1NzExOTVENzE0NkQ4MzgKUldRNDJFWnhYUmx4TmU3ekF2czU1UXpGOURxN29GUml5UFJvUnlUU3FpSXhtZUUwejdzMlZLcEIK"
     }
   },
   "bundle": {
     "active": true,
+    "createUpdaterArtifacts": true,
     "targets": "all",
     "icon": [
       "icons/32x32.png",

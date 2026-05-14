@@ -414,9 +414,11 @@ async function checkForUpdates() {
       updateAvailable = metadata;
       updateBtn.textContent = 'Install Update';
       updateBtn.classList.add('install');
-      updateVersion.textContent = metadata.version ? `v${metadata.version}` : 'v0.1.0';
+      updateVersion.textContent = metadata.version ? `v${metadata.version}` : 'v0.1.7';
     } else {
+      updateAvailable = null;
       updateBtn.textContent = 'Up to date';
+      updateBtn.classList.remove('install');
       updateBtn.disabled = true;
       setTimeout(() => {
         updateBtn.textContent = 'Check for Updates';
@@ -443,8 +445,7 @@ updateBtn?.addEventListener('click', async () => {
         onEvent: new Channel(),
         rid: updateAvailable.rid
       });
-      const { relaunch } = window.__TAURI__.process;
-      await relaunch();
+      await invoke('plugin:process|restart');
     } catch (err) {
       console.error('Update install failed:', err);
       updateBtn.textContent = 'Install failed';
