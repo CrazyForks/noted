@@ -28,6 +28,7 @@ const container = document.getElementById('canvas-container');
 const indicator = document.getElementById('note-indicator');
 const settingsButton = document.getElementById('btn-settings');
 const settingsPanel = document.getElementById('settings-panel');
+const appStatus = document.getElementById('app-status');
 
 const importThemeButton = document.getElementById('btn-import-theme');
 const themeFileInput = document.getElementById('theme-file-input');
@@ -36,6 +37,18 @@ const dropdownTrigger = document.getElementById('theme-dropdown-trigger');
 const dropdownPanel = document.getElementById('theme-dropdown-panel');
 const dropdownLabel = document.getElementById('theme-dropdown-label');
 let dropdownOpen = false;
+let statusTimeout = null;
+let closingAfterSave = false;
+
+function showStatus(message) {
+  if (!appStatus) return;
+  if (statusTimeout) clearTimeout(statusTimeout);
+  appStatus.textContent = message;
+  appStatus.classList.add('visible');
+  statusTimeout = setTimeout(() => {
+    appStatus.classList.remove('visible');
+  }, 3200);
+}
 
 function closeDropdown() {
   dropdownOpen = false;
@@ -160,8 +173,10 @@ async function importThemeFile(file) {
 
     await saveImportedTheme(imported);
     setThemeByName(imported.name);
+    showStatus(`Imported ${imported.name}`);
   } catch (error) {
     console.error(error);
+    showStatus('Theme import failed');
   } finally {
     themeFileInput.value = '';
   }
@@ -242,6 +257,7 @@ async function saveCurrentNote() {
     .then(() => invoke('save_note', { id: note.id, content }))
     .catch((error) => {
       console.error('Save failed:', error);
+      showStatus('Save failed');
       throw error;
     });
 
@@ -263,6 +279,21 @@ async function flushPendingSave() {
   }
 
   await pendingSave;
+}
+
+async function closeAfterFlushingSave() {
+  if (closingAfterSave) return;
+  closingAfterSave = true;
+  try {
+    await flushPendingSave();
+  } catch (error) {
+    console.error('Save before close failed:', error);
+    showStatus('Save failed');
+    closingAfterSave = false;
+    return;
+  }
+
+  await appWindow.close();
 }
 
 // ── Animation helper ──
@@ -489,10 +520,7 @@ updateBtn?.addEventListener('click', async () => {
 
 // ── Init ──
 
-window.addEventListener('DOMContentLoaded', () => {
-  initThemes();
-  loadNotes();
-
+window.addEventListener('DOMContentLoaded', async () => {
   undoManager = new UndoManager({
     getValue:           () => canvas.value,
     setValue:           (v) => { canvas.value = v; },
@@ -502,8 +530,20 @@ window.addEventListener('DOMContentLoaded', () => {
     getNoteId:          () => notes[currentIndex]?.id ?? null
   });
 
+  canvas.disabled = true;
   canvas.addEventListener('input', scheduleSave);
   canvas.addEventListener('beforeinput', (e) => undoManager.beforeInput(e));
+
+  try {
+    await initThemes();
+    await loadNotes();
+  } catch (error) {
+    console.error('Startup failed:', error);
+    showStatus('Could not load notes');
+  } finally {
+    canvas.disabled = false;
+    canvas.focus();
+  }
 
   settingsButton?.addEventListener('mousedown', (e) => {
     e.stopPropagation();
@@ -526,6 +566,12 @@ window.addEventListener('DOMContentLoaded', () => {
   });
   document.getElementById('btn-close')?.addEventListener('mousedown', (e) => {
     e.stopPropagation();
-    appWindow.close();
+    closeAfterFlushingSave();
+  });
+
+  appWindow.onCloseRequested(async (event) => {
+    if (closingAfterSave) return;
+    event.preventDefault();
+    await closeAfterFlushingSave();
   });
 });

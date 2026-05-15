@@ -31,7 +31,11 @@ fn safe_theme_filename(name: &str) -> String {
         .trim_matches('.')
         .to_string();
 
-    let safe = if safe.is_empty() { "theme".to_string() } else { safe };
+    let safe = if safe.is_empty() {
+        "theme".to_string()
+    } else {
+        safe
+    };
     format!("{}.json", safe)
 }
 
@@ -46,7 +50,11 @@ fn create_note(state: tauri::State<'_, db::Database>) -> Result<db::Note, String
 }
 
 #[tauri::command]
-fn save_note(id: i64, content: String, state: tauri::State<'_, db::Database>) -> Result<(), String> {
+fn save_note(
+    id: i64,
+    content: String,
+    state: tauri::State<'_, db::Database>,
+) -> Result<(), String> {
     state.save_note(id, &content)
 }
 
@@ -80,7 +88,11 @@ fn list_theme_files(paths: tauri::State<'_, AppPaths>) -> Result<Vec<ThemeFile>,
 }
 
 #[tauri::command]
-fn save_theme_file(name: String, json: String, paths: tauri::State<'_, AppPaths>) -> Result<(), String> {
+fn save_theme_file(
+    name: String,
+    json: String,
+    paths: tauri::State<'_, AppPaths>,
+) -> Result<(), String> {
     // Validate that the payload is JSON before writing it to disk.
     serde_json::from_str::<serde_json::Value>(&json).map_err(|e| e.to_string())?;
     fs::create_dir_all(&paths.themes_dir).map_err(|e| e.to_string())?;
@@ -112,7 +124,10 @@ pub fn run() {
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .setup(|app| {
-            let app_data_dir = app.path().app_data_dir().expect("failed to get app data dir");
+            let app_data_dir = app
+                .path()
+                .app_data_dir()
+                .expect("failed to get app data dir");
             fs::create_dir_all(&app_data_dir).expect("failed to create app data dir");
 
             let themes_dir = app_data_dir.join("themes");

@@ -249,6 +249,11 @@ html, body {
   letter-spacing: 0.02em;
 }
 
+#note-canvas:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
 /* ── Note Indicator ── */
 
 #note-indicator {
@@ -283,6 +288,33 @@ html, body {
 #note-indicator .note-count {
   color: var(--theme-type-light);
   font: 600 11px/1 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+#app-status {
+  position: absolute;
+  left: 50%;
+  bottom: 34px;
+  transform: translateX(-50%) translateY(6px);
+  max-width: calc(100% - 48px);
+  padding: 7px 11px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--theme-background) 86%, var(--theme-type-main) 14%);
+  color: var(--theme-type-main);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  font: 600 11px/1.25 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+  opacity: 0;
+  pointer-events: none;
+  text-align: center;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  z-index: 70;
+}
+
+#app-status.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 /* ── Settings ── */
