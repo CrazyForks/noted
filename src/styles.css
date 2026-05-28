@@ -16,6 +16,46 @@
   --theme-grid-superlight: #00000000;
   --theme-grid-clear: #00000000;
   --theme-grid-bold: #00000000;
+
+  --surface-app: var(--theme-background);
+  --surface-raised: color-mix(in srgb, var(--theme-background) 88%, var(--theme-type-reverse) 12%);
+  --surface-raised-hover: color-mix(in srgb, var(--theme-background) 80%, var(--theme-type-reverse) 20%);
+  --surface-subtle: color-mix(in srgb, var(--theme-type-main) 6%, transparent);
+  --surface-hover: color-mix(in srgb, var(--theme-type-main) 10%, transparent);
+  --surface-active: color-mix(in srgb, var(--theme-accent-main) 8%, var(--theme-background));
+  --surface-status: color-mix(in srgb, var(--theme-background) 86%, var(--theme-type-main) 14%);
+  --surface-code: color-mix(in srgb, var(--theme-type-main) 8%, transparent);
+  --surface-titlebar-hover: color-mix(in srgb, var(--theme-type-main) 5%, transparent);
+  --surface-grip: color-mix(in srgb, var(--theme-type-main) 18%, transparent);
+  --surface-key: color-mix(in srgb, var(--theme-background) 92%, var(--theme-type-reverse) 8%);
+  --surface-scrollbar: color-mix(in srgb, var(--theme-type-main) 12%, transparent);
+  --surface-scrollbar-hover: color-mix(in srgb, var(--theme-type-main) 22%, transparent);
+
+  --text-primary: var(--theme-type-main);
+  --text-secondary: var(--theme-type-subtle);
+  --text-muted: var(--theme-type-light);
+  --text-accent: var(--theme-type-subtle-plus);
+  --text-on-control: var(--theme-control-text);
+
+  --accent-primary: var(--theme-accent-main);
+  --accent-primary-soft: color-mix(in srgb, var(--theme-accent-main) 16%, transparent);
+  --danger: var(--theme-danger);
+
+  --border-faint: color-mix(in srgb, var(--theme-type-main) 8%, transparent);
+  --border-muted: color-mix(in srgb, var(--theme-type-main) 14%, transparent);
+  --border-control: color-mix(in srgb, var(--theme-type-main) 18%, transparent);
+  --border-hover: color-mix(in srgb, var(--theme-type-main) 16%, transparent);
+  --border-strong: color-mix(in srgb, var(--theme-type-main) 26%, transparent);
+  --focus-ring: color-mix(in srgb, var(--theme-accent-main) 30%, transparent);
+  --highlight-selection: var(--theme-type-highlight);
+  --grid-dot: var(--theme-grid-superlight);
+
+  --highlight-raised: color-mix(in srgb, var(--theme-type-reverse) 18%, transparent);
+  --shadow-window: 0 8px 32px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-popover: 0 8px 32px rgba(0, 0, 0, 0.10), 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-status: 0 6px 18px rgba(0, 0, 0, 0.12);
+  --shadow-key: 0 1.5px 0 var(--surface-hover), 0 0 0 0.5px color-mix(in srgb, var(--theme-type-reverse) 30%, transparent) inset;
+
   --editor-left-padding: 32px;
   --editor-top-padding: 10px;
   --editor-line-height: 19px;
@@ -40,10 +80,8 @@ html, body {
   height: 100%;
   border-radius: 16px;
   overflow: hidden;
-  background-color: var(--theme-background);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.14),
-    0 2px 8px rgba(0, 0, 0, 0.08);
+  background-color: var(--surface-app);
+  box-shadow: var(--shadow-window);
   display: flex;
   flex-direction: column;
 }
@@ -54,7 +92,7 @@ html, body {
 
 :root[data-grid="on"] #window {
   background-image:
-    radial-gradient(circle, var(--theme-grid-superlight) 1.5px, transparent 1.5px);
+    radial-gradient(circle, var(--grid-dot) 1.5px, transparent 1.5px);
   background-size: var(--grid-column-width) var(--editor-line-height);
   background-position: var(--editor-left-padding) calc(36px + var(--editor-top-padding) - 4px);
 }
@@ -75,7 +113,7 @@ html, body {
 }
 
 #titlebar:hover {
-  background: color-mix(in srgb, var(--theme-type-main) 5%, transparent);
+  background: var(--surface-titlebar-hover);
 }
 
 #titlebar:active {
@@ -91,7 +129,7 @@ html, body {
 }
 
 #titlebar:hover #titlebar-grip {
-  background: color-mix(in srgb, var(--theme-type-main) 18%, transparent);
+  background: var(--surface-grip);
 }
 
 #window-controls {
@@ -123,7 +161,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--theme-type-light);
+  color: var(--text-muted);
   cursor: pointer;
   padding: 0;
   transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
@@ -131,8 +169,8 @@ html, body {
 
 #window-controls button:hover,
 #btn-settings:hover {
-  background: color-mix(in srgb, var(--theme-type-main) 10%, transparent);
-  color: var(--theme-type-main);
+  background: var(--surface-hover);
+  color: var(--text-primary);
 }
 
 #btn-settings {
@@ -156,13 +194,13 @@ html, body {
 }
 
 #btn-settings.open {
-  color: var(--theme-accent-main);
-  background: color-mix(in srgb, var(--theme-accent-main) 16%, transparent);
+  color: var(--accent-primary);
+  background: var(--accent-primary-soft);
 }
 
 #btn-close:hover {
-  background: var(--theme-danger);
-  color: var(--theme-control-text);
+  background: var(--danger);
+  color: var(--text-on-control);
 }
 
 /* ── Canvas ── */
@@ -183,22 +221,22 @@ html, body {
   font-family: 'SF Mono', 'SFMono-Regular', ui-monospace, 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', monospace;
   font-size: 14px;
   line-height: var(--editor-line-height);
-  color: var(--theme-type-main);
+  color: var(--text-primary);
   background: transparent;
   text-align: left;
   letter-spacing: 0.01em;
-  caret-color: var(--theme-accent-main);
+  caret-color: var(--accent-primary);
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
   overflow-wrap: break-word;
-  scrollbar-color: var(--theme-type-highlight) transparent;
+  scrollbar-color: var(--highlight-selection) transparent;
   scrollbar-width: thin;
   transition: opacity 0.15s ease, transform 0.2s ease;
 }
 
 #note-canvas::selection {
-  color: var(--theme-type-main);
-  background: var(--theme-type-highlight);
+  color: var(--text-primary);
+  background: var(--highlight-selection);
 }
 
 #note-canvas::-webkit-scrollbar {
@@ -210,14 +248,14 @@ html, body {
 }
 
 #note-canvas::-webkit-scrollbar-thumb {
-  background: var(--theme-type-highlight);
+  background: var(--highlight-selection);
   border: 2px solid transparent;
   border-radius: 999px;
   background-clip: content-box;
 }
 
 #note-canvas::-webkit-scrollbar-thumb:hover {
-  background: var(--theme-accent-main);
+  background: var(--accent-primary);
   background-clip: content-box;
 }
 
@@ -242,7 +280,7 @@ html, body {
 }
 
 #note-canvas::placeholder {
-  color: var(--theme-type-light);
+  color: var(--text-muted);
   font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 14px;
   font-weight: 400;
@@ -276,17 +314,17 @@ html, body {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--theme-type-main) 14%, transparent);
+  background: var(--border-muted);
   transition: background 0.2s ease, transform 0.2s ease;
 }
 
 #note-indicator .dot.active {
-  background: var(--theme-accent-main);
+  background: var(--accent-primary);
   transform: scale(1.2);
 }
 
 #note-indicator .note-count {
-  color: var(--theme-type-light);
+  color: var(--text-muted);
   font: 600 11px/1 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -298,9 +336,9 @@ html, body {
   max-width: calc(100% - 48px);
   padding: 7px 11px;
   border-radius: 8px;
-  background: color-mix(in srgb, var(--theme-background) 86%, var(--theme-type-main) 14%);
-  color: var(--theme-type-main);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  background: var(--surface-status);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-status);
   font: 600 11px/1.25 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
   opacity: 0;
   pointer-events: none;
@@ -329,7 +367,7 @@ html, body {
   flex-direction: column;
   min-height: 0;
   padding: 32px;
-  color: var(--theme-type-main);
+  color: var(--text-primary);
   animation: settings-in 0.2s ease-out;
 }
 
@@ -369,11 +407,11 @@ html, body {
   gap: 12px;
   margin-bottom: 16px;
   padding-bottom: 10px;
-  border-bottom: 1px solid color-mix(in srgb, var(--theme-type-main) 8%, transparent);
+  border-bottom: 1px solid var(--border-faint);
 }
 
 .settings-section-title {
-  color: var(--theme-type-subtle);
+  color: var(--text-secondary);
   font: 700 10px/1 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -391,39 +429,39 @@ html, body {
   align-items: center;
   gap: 6px;
   padding: 5px 10px 5px 12px;
-  border: 1px solid color-mix(in srgb, var(--theme-type-main) 14%, transparent);
+  border: 1px solid var(--border-muted);
   border-radius: 8px;
-  background: color-mix(in srgb, var(--theme-background) 88%, var(--theme-type-reverse) 12%);
-  color: var(--theme-type-main);
+  background: var(--surface-raised);
+  color: var(--text-primary);
   font: 500 12px/1.2 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
   cursor: pointer;
   outline: none;
   white-space: nowrap;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--theme-type-reverse) 18%, transparent);
+  box-shadow: inset 0 1px 0 var(--highlight-raised);
   transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
   -webkit-app-region: no-drag;
 }
 
 .theme-dropdown-trigger:hover {
-  border-color: color-mix(in srgb, var(--theme-type-main) 26%, transparent);
-  background: color-mix(in srgb, var(--theme-background) 80%, var(--theme-type-reverse) 20%);
+  border-color: var(--border-strong);
+  background: var(--surface-raised-hover);
 }
 
 .theme-dropdown-trigger:focus-visible {
-  border-color: var(--theme-accent-main);
+  border-color: var(--accent-primary);
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--theme-type-reverse) 18%, transparent),
-    0 0 0 2px color-mix(in srgb, var(--theme-accent-main) 30%, transparent);
+    inset 0 1px 0 var(--highlight-raised),
+    0 0 0 2px var(--focus-ring);
 }
 
 .theme-dropdown-trigger[aria-expanded="true"] {
-  border-color: var(--theme-accent-main);
-  background: color-mix(in srgb, var(--theme-accent-main) 8%, var(--theme-background));
+  border-color: var(--accent-primary);
+  background: var(--surface-active);
 }
 
 .theme-dropdown-chevron {
   flex-shrink: 0;
-  color: var(--theme-type-subtle-plus);
+  color: var(--text-accent);
   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -440,15 +478,13 @@ html, body {
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--theme-type-main) 14%, transparent) transparent;
-  background: color-mix(in srgb, var(--theme-background) 88%, var(--theme-type-reverse) 12%);
+  scrollbar-color: var(--border-muted) transparent;
+  background: var(--surface-raised);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid color-mix(in srgb, var(--theme-type-main) 12%, transparent);
+  border: 1px solid var(--surface-scrollbar);
   border-radius: 12px;
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.10),
-    0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-popover);
   padding: 6px;
   z-index: 50;
   animation: dropdown-in 0.2s cubic-bezier(0.22, 1, 0.36, 1);
@@ -464,12 +500,12 @@ html, body {
 }
 
 .theme-dropdown-panel::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--theme-type-main) 12%, transparent);
+  background: var(--surface-scrollbar);
   border-radius: 999px;
 }
 
 .theme-dropdown-panel::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in srgb, var(--theme-type-main) 22%, transparent);
+  background: var(--surface-scrollbar-hover);
 }
 
 @keyframes dropdown-in {
@@ -492,7 +528,7 @@ html, body {
   border: none;
   border-radius: 8px;
   background: transparent;
-  color: var(--theme-type-main);
+  color: var(--text-primary);
   font: 500 12px/1.2 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
   text-align: left;
   cursor: pointer;
@@ -501,12 +537,12 @@ html, body {
 }
 
 .theme-dropdown-option:hover {
-  background: color-mix(in srgb, var(--theme-type-main) 6%, transparent);
+  background: var(--surface-subtle);
   transform: translateX(2px);
 }
 
 .theme-dropdown-option:focus-visible {
-  background: color-mix(in srgb, var(--theme-type-main) 6%, transparent);
+  background: var(--surface-subtle);
 }
 
 .theme-dropdown-option[aria-selected="true"] {
@@ -525,7 +561,7 @@ html, body {
 }
 
 .theme-option-check-icon {
-  color: var(--theme-accent-main);
+  color: var(--accent-primary);
   animation: check-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -548,7 +584,7 @@ html, body {
   height: 10px;
   border-radius: 50%;
   background: var(--swatch-color);
-  box-shadow: inset 0 0 0 0.5px color-mix(in srgb, var(--theme-type-main) 10%, transparent);
+  box-shadow: inset 0 0 0 0.5px var(--surface-hover);
   flex-shrink: 0;
   transition: transform 0.15s ease;
 }
@@ -587,14 +623,14 @@ html, body {
 }
 
 .theme-browse-link {
-  color: var(--theme-type-subtle-plus);
+  color: var(--text-accent);
   font: 500 12px/1 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
 .theme-browse-link:hover {
-  color: var(--theme-accent-main);
+  color: var(--accent-primary);
   text-decoration: underline;
 }
 
@@ -602,8 +638,8 @@ html, body {
   border: none;
   border-radius: 12px;
   padding: 11px 16px;
-  color: var(--theme-control-text);
-  background: var(--theme-accent-main);
+  color: var(--text-on-control);
+  background: var(--accent-primary);
   cursor: pointer;
   font: 700 12px/1 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
   letter-spacing: 0.03em;
@@ -623,14 +659,14 @@ html, body {
   align-items: center;
   justify-content: space-between;
   padding-top: 12px;
-  border-top: 1px solid color-mix(in srgb, var(--theme-type-main) 8%, transparent);
+  border-top: 1px solid var(--border-faint);
   margin-top: auto;
 }
 
 .settings-update-btn {
   border: none;
   background: none;
-  color: var(--theme-type-main);
+  color: var(--text-primary);
   font: 500 12px/1 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
   cursor: pointer;
   padding: 0;
@@ -638,21 +674,21 @@ html, body {
 }
 
 .settings-update-btn:hover {
-  color: var(--theme-accent-main);
+  color: var(--accent-primary);
 }
 
 .settings-update-btn:disabled {
-  color: var(--theme-type-light);
+  color: var(--text-muted);
   cursor: default;
 }
 
 .settings-update-btn.install {
-  color: var(--theme-accent-main);
+  color: var(--accent-primary);
   font-weight: 600;
 }
 
 .settings-update-version {
-  color: var(--theme-type-light);
+  color: var(--text-muted);
   font: 500 11px/1 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -665,7 +701,7 @@ html, body {
   width: 100%;
   padding: 0 0 10px;
   border: none;
-  border-bottom: 1px solid color-mix(in srgb, var(--theme-type-main) 8%, transparent);
+  border-bottom: 1px solid var(--border-faint);
   background: transparent;
   cursor: pointer;
   outline: none;
@@ -673,12 +709,12 @@ html, body {
 }
 
 .shortcut-section-trigger:hover {
-  border-bottom-color: color-mix(in srgb, var(--theme-type-main) 16%, transparent);
+  border-bottom-color: var(--border-hover);
 }
 
 .shortcut-section-trigger:focus-visible {
-  border-bottom-color: var(--theme-accent-main);
-  box-shadow: 0 1px 0 var(--theme-accent-main);
+  border-bottom-color: var(--accent-primary);
+  box-shadow: 0 1px 0 var(--accent-primary);
 }
 
 .shortcut-section-trigger .settings-section-title {
@@ -689,7 +725,7 @@ html, body {
 
 .shortcut-chevron {
   flex-shrink: 0;
-  color: var(--theme-type-subtle-plus);
+  color: var(--text-accent);
   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -727,48 +763,48 @@ html, body {
   min-width: 36px;
   height: 32px;
   padding: 0 10px;
-  border: 1px solid color-mix(in srgb, var(--theme-type-main) 18%, transparent);
+  border: 1px solid var(--border-control);
   border-radius: 8px;
-  background: color-mix(in srgb, var(--theme-background) 88%, var(--theme-type-reverse) 12%);
-  color: var(--theme-type-main);
+  background: var(--surface-raised);
+  color: var(--text-primary);
   font: 600 12px/1 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
-  box-shadow: 0 1.5px 0 color-mix(in srgb, var(--theme-type-main) 10%, transparent), 0 0 0 0.5px color-mix(in srgb, var(--theme-type-reverse) 30%, transparent) inset;
+  box-shadow: var(--shadow-key);
   letter-spacing: 0.01em;
 }
 
 .shortcut-plus {
-  color: var(--theme-type-subtle-plus);
+  color: var(--text-accent);
   font: 500 13px/1 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .shortcut-steps {
   margin: 0;
   padding: 0 0 0 20px;
-  color: var(--theme-type-subtle-plus);
+  color: var(--text-accent);
   font: 400 11px/1.8 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .shortcut-steps strong {
-  color: var(--theme-type-main);
+  color: var(--text-primary);
   font-weight: 600;
 }
 
 .shortcut-steps kbd {
   display: inline-block;
   padding: 1px 5px;
-  border: 1px solid color-mix(in srgb, var(--theme-type-main) 18%, transparent);
+  border: 1px solid var(--border-control);
   border-radius: 4px;
-  background: color-mix(in srgb, var(--theme-background) 92%, var(--theme-type-reverse) 8%);
-  color: var(--theme-type-main);
+  background: var(--surface-key);
+  color: var(--text-primary);
   font: 600 10px/1.4 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
-  box-shadow: 0 1px 0 color-mix(in srgb, var(--theme-type-main) 8%, transparent);
+  box-shadow: 0 1px 0 var(--border-faint);
 }
 
 code {
   display: inline-block;
   padding: 1px 5px;
   border-radius: 4px;
-  background: color-mix(in srgb, var(--theme-type-main) 8%, transparent);
-  color: var(--theme-type-main);
+  background: var(--surface-code);
+  color: var(--text-primary);
   font: 500 11px/1.4 'SF Mono', 'SFMono-Regular', ui-monospace, 'Menlo', monospace;
 }
