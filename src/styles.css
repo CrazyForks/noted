@@ -304,83 +304,112 @@ html, body {
   display: none;
 }
 
-#note-canvas {
+#note-editor {
   position: relative;
   z-index: 1;
   width: 100%;
   height: 100%;
+  transition: opacity 0.15s ease, transform 0.2s ease;
+}
+
+#note-editor .cm-editor {
+  width: 100%;
+  height: 100%;
   border: none;
   outline: none;
-  resize: none;
-  padding: var(--editor-top-padding) var(--editor-left-padding) 32px var(--editor-left-padding);
+  color: var(--text-primary);
+  background: transparent;
+}
+
+#note-editor .cm-focused {
+  outline: none;
+}
+
+#note-editor .cm-scroller {
   font-family: 'SF Mono', 'SFMono-Regular', ui-monospace, 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', monospace;
   font-size: 14px;
   line-height: var(--editor-line-height);
-  color: var(--text-primary);
-  background: transparent;
   text-align: left;
   letter-spacing: 0.01em;
-  caret-color: var(--accent-primary);
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
   overflow-wrap: break-word;
   scrollbar-color: var(--highlight-selection) transparent;
   scrollbar-width: thin;
-  transition: opacity 0.15s ease, transform 0.2s ease;
 }
 
-:root[data-glass="on"] #note-canvas {
+#note-editor .cm-content {
+  min-height: 100%;
+  padding: var(--editor-top-padding) var(--editor-left-padding) 32px var(--editor-left-padding);
+  caret-color: var(--accent-primary);
+}
+
+#note-editor .cm-line {
+  padding: 0;
+}
+
+#note-editor .cm-cursor {
+  border-left-color: var(--accent-primary);
+}
+
+#note-editor .cm-selectionBackground,
+#note-editor.cm-focused .cm-selectionBackground,
+#note-editor .cm-editor.cm-focused .cm-selectionBackground {
+  background: var(--highlight-selection);
+}
+
+:root[data-glass="on"] #note-editor .cm-content {
   text-shadow:
     0 1px 2px rgba(0, 0, 0, 0.72),
     0 0 14px rgba(0, 0, 0, 0.28);
 }
 
-#note-canvas::selection {
+#note-editor ::selection {
   color: var(--text-primary);
   background: var(--highlight-selection);
 }
 
-#note-canvas::-webkit-scrollbar {
+#note-editor .cm-scroller::-webkit-scrollbar {
   width: 8px;
 }
 
-#note-canvas::-webkit-scrollbar-track {
+#note-editor .cm-scroller::-webkit-scrollbar-track {
   background: transparent;
 }
 
-#note-canvas::-webkit-scrollbar-thumb {
+#note-editor .cm-scroller::-webkit-scrollbar-thumb {
   background: var(--highlight-selection);
   border: 2px solid transparent;
   border-radius: 999px;
   background-clip: content-box;
 }
 
-#note-canvas::-webkit-scrollbar-thumb:hover {
+#note-editor .cm-scroller::-webkit-scrollbar-thumb:hover {
   background: var(--accent-primary);
   background-clip: content-box;
 }
 
-#note-canvas.slide-left-out {
+#note-editor.slide-left-out {
   opacity: 0;
   transform: translateX(-30px);
 }
 
-#note-canvas.slide-right-out {
+#note-editor.slide-right-out {
   opacity: 0;
   transform: translateX(30px);
 }
 
-#note-canvas.slide-left-in {
+#note-editor.slide-left-in {
   transform: translateX(30px);
   opacity: 0;
 }
 
-#note-canvas.slide-right-in {
+#note-editor.slide-right-in {
   transform: translateX(-30px);
   opacity: 0;
 }
 
-#note-canvas::placeholder {
+#note-editor .cm-placeholder {
   color: var(--text-muted);
   font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 14px;
@@ -388,7 +417,7 @@ html, body {
   letter-spacing: 0.02em;
 }
 
-#note-canvas:disabled {
+#note-editor.is-disabled {
   opacity: 0.55;
   cursor: wait;
 }

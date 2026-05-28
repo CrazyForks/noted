@@ -1,11 +1,11 @@
 import { bindKeyboardShortcuts } from './keyboard-shortcuts.js';
+import { createEditorController } from './editor-controller.js';
 import { initLiquidGlassFilter } from './liquid-glass.js';
 import { createNavigation } from './navigation.js';
 import { createNotesController } from './notes-controller.js';
 import { createSettingsUi } from './settings-ui.js';
 import { createStatusController } from './status-ui.js';
 import { createThemeUi } from './theme-ui.js';
-import { UndoManager } from './undo/undo-manager.js';
 import { createUpdaterUi } from './updater-ui.js';
 import { createWindowControls } from './window-controls.js';
 
@@ -13,7 +13,7 @@ const { invoke, Channel } = window.__TAURI__.core;
 const { getCurrentWindow } = window.__TAURI__.window;
 const appWindow = getCurrentWindow();
 
-const canvas = document.getElementById('note-canvas');
+const editorMount = document.getElementById('note-editor');
 const container = document.getElementById('canvas-container');
 const indicator = document.getElementById('note-indicator');
 const settingsButton = document.getElementById('btn-settings');
@@ -33,21 +33,16 @@ window.addEventListener('DOMContentLoaded', async () => {
   initLiquidGlassFilter(document.getElementById('window'));
 
   const status = createStatusController(appStatus);
+  const editor = createEditorController({
+    mount: editorMount,
+    disabled: true
+  });
   const notes = createNotesController({
-    canvas,
+    editor,
     indicator,
     invoke,
     status
   });
-  const undoManager = new UndoManager({
-    getValue:           () => canvas.value,
-    setValue:           (value) => { canvas.value = value; },
-    getSelectionStart:  () => canvas.selectionStart,
-    getSelectionEnd:    () => canvas.selectionEnd,
-    setSelection:       (start, end) => { canvas.selectionStart = start; canvas.selectionEnd = end; },
-    getNoteId:          () => notes.getCurrentNoteId()
-  });
-  notes.setUndoManager(undoManager);
 
   const themeUi = createThemeUi({
     dropdownTrigger,
@@ -64,7 +59,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     shortcutBody
   });
   const navigation = createNavigation({
-    canvas,
+    editor,
     container,
     notes
   });
@@ -83,9 +78,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     status
   });
 
-  canvas.disabled = true;
-  canvas.addEventListener('input', notes.scheduleSave);
-  canvas.addEventListener('beforeinput', (e) => undoManager.beforeInput(e));
+  editor.setDisabled(true);
+  editor.onChange(notes.scheduleSave);
 
   themeUi.bind();
   settings.bind();
@@ -94,10 +88,10 @@ window.addEventListener('DOMContentLoaded', async () => {
   windowControls.bind();
   bindKeyboardShortcuts({
     document,
+    editor,
     navigation,
     notes,
-    settings,
-    undoManager
+    settings
   });
 
   try {
@@ -107,7 +101,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     console.error('Startup failed:', error);
     status.show('Could not load notes');
   } finally {
-    canvas.disabled = false;
-    canvas.focus();
+    editor.setDisabled(false);
+    editor.focus();
   }
 });

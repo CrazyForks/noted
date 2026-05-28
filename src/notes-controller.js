@@ -1,5 +1,5 @@
 export function createNotesController({
-  canvas,
+  editor,
   indicator,
   invoke,
   status
@@ -8,11 +8,6 @@ export function createNotesController({
   let currentIndex = 0;
   let saveTimeout = null;
   let pendingSave = Promise.resolve();
-  let undoManager = null;
-
-  function setUndoManager(manager) {
-    undoManager = manager;
-  }
 
   async function init() {
     notes = await invoke('list_notes');
@@ -26,7 +21,7 @@ export function createNotesController({
 
   function renderCurrentNote(animate) {
     if (animate) return;
-    canvas.value = getCurrentContent();
+    editor.setDocument(getCurrentContent(), getCurrentNoteId());
     updateIndicator();
   }
 
@@ -59,7 +54,7 @@ export function createNotesController({
     const note = notes[currentIndex];
     if (!note) return pendingSave;
 
-    const content = canvas.value;
+    const content = editor.getValue();
     const noteIndex = currentIndex;
     notes[noteIndex].content = content;
 
@@ -80,7 +75,6 @@ export function createNotesController({
     saveTimeout = setTimeout(() => {
       saveCurrentNote().catch(() => {});
     }, 300);
-    undoManager.activity();
   }
 
   async function flushPendingSave() {
@@ -93,11 +87,10 @@ export function createNotesController({
   }
 
   async function deleteIfEmpty() {
-    const content = canvas.value.trim();
+    const content = editor.getValue().trim();
     if (content === '' && notes.length > 1) {
       await flushPendingSave();
       const note = notes[currentIndex];
-      undoManager.forget(note.id);
       await invoke('delete_note', { id: note.id });
       notes.splice(currentIndex, 1);
       if (currentIndex >= notes.length) currentIndex = notes.length - 1;
@@ -110,27 +103,20 @@ export function createNotesController({
     await saveCurrentNote();
     const newNote = await invoke('create_note');
     notes.push(newNote);
-    prepareForNoteSwitch(newNote.id);
     currentIndex = notes.length - 1;
-    return '';
+    return getCurrentDocument();
   }
 
   async function moveToNextAfterSave() {
     await saveCurrentNote();
-    prepareForNoteSwitch(notes[currentIndex + 1].id);
     currentIndex++;
-    return getCurrentContent();
+    return getCurrentDocument();
   }
 
   async function moveToPrevAfterSave() {
     await saveCurrentNote();
-    prepareForNoteSwitch(notes[currentIndex - 1].id);
     currentIndex--;
-    return getCurrentContent();
-  }
-
-  function prepareForNoteSwitch(newNoteId) {
-    undoManager.onNoteSwitch(newNoteId);
+    return getCurrentDocument();
   }
 
   function getCurrentContent() {
@@ -139,6 +125,13 @@ export function createNotesController({
 
   function getCurrentNoteId() {
     return notes[currentIndex]?.id ?? null;
+  }
+
+  function getCurrentDocument() {
+    return {
+      id: getCurrentNoteId(),
+      content: getCurrentContent()
+    };
   }
 
   function isAtLastNote() {
@@ -154,6 +147,7 @@ export function createNotesController({
     deleteIfEmpty,
     flushPendingSave,
     getCurrentContent,
+    getCurrentDocument,
     getCurrentNoteId,
     init,
     isAtFirstNote,
@@ -162,7 +156,6 @@ export function createNotesController({
     moveToPrevAfterSave,
     saveCurrentNote,
     scheduleSave,
-    setUndoManager,
     updateIndicator
   };
 }

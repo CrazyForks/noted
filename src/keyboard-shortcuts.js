@@ -1,26 +1,26 @@
 export function bindKeyboardShortcuts({
   document,
+  editor,
   navigation,
   notes,
-  settings,
-  undoManager
+  settings
 }) {
   document.addEventListener('keydown', (e) => {
     const mod = e.metaKey || e.ctrlKey;
 
     if (mod && !e.shiftKey && (e.key === 'z' || e.key === 'Z')) {
       e.preventDefault();
-      if (undoManager.undo()) notes.saveCurrentNote().catch(() => {});
+      if (editor.undo()) notes.saveCurrentNote().catch(() => {});
       return;
     }
     if (mod && e.shiftKey && (e.key === 'z' || e.key === 'Z')) {
       e.preventDefault();
-      if (undoManager.redo()) notes.saveCurrentNote().catch(() => {});
+      if (editor.redo()) notes.saveCurrentNote().catch(() => {});
       return;
     }
     if (mod && !e.shiftKey && (e.key === 'y' || e.key === 'Y')) {
       e.preventDefault();
-      if (undoManager.redo()) notes.saveCurrentNote().catch(() => {});
+      if (editor.redo()) notes.saveCurrentNote().catch(() => {});
       return;
     }
 

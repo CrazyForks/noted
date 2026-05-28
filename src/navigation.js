@@ -2,7 +2,7 @@ const SWIPE_THRESHOLD = 80;
 const GESTURE_TIMEOUT = 200;
 
 export function createNavigation({
-  canvas,
+  editor,
   container,
   notes
 }) {
@@ -17,16 +17,16 @@ export function createNavigation({
     const deleted = await notes.deleteIfEmpty();
 
     if (deleted) {
-      await animateSwap('slide-left-out', 'slide-left-in', notes.getCurrentContent());
+      await animateSwap('slide-left-out', 'slide-left-in', notes.getCurrentDocument());
       notes.updateIndicator();
       return;
     }
 
-    const newContent = notes.isAtLastNote()
+    const newDocument = notes.isAtLastNote()
       ? await notes.appendNoteAfterSave()
       : await notes.moveToNextAfterSave();
 
-    await animateSwap('slide-left-out', 'slide-left-in', newContent);
+    await animateSwap('slide-left-out', 'slide-left-in', newDocument);
     notes.updateIndicator();
   }
 
@@ -36,13 +36,13 @@ export function createNavigation({
     const deleted = await notes.deleteIfEmpty();
 
     if (deleted) {
-      await animateSwap('slide-right-out', 'slide-right-in', notes.getCurrentContent());
+      await animateSwap('slide-right-out', 'slide-right-in', notes.getCurrentDocument());
       notes.updateIndicator();
       return;
     }
 
-    const newContent = await notes.moveToPrevAfterSave();
-    await animateSwap('slide-right-out', 'slide-right-in', newContent);
+    const newDocument = await notes.moveToPrevAfterSave();
+    await animateSwap('slide-right-out', 'slide-right-in', newDocument);
     notes.updateIndicator();
   }
 
@@ -78,26 +78,26 @@ export function createNavigation({
     }, { passive: false });
   }
 
-  function animateSwap(outClass, inClass, newContent) {
+  function animateSwap(outClass, inClass, newDocument) {
     return new Promise((resolve) => {
       animating = true;
 
-      canvas.classList.add(outClass);
+      editor.applyTransition(outClass, true);
 
       setTimeout(() => {
-        canvas.value = newContent;
-        canvas.scrollTop = 0;
+        editor.setDocument(newDocument.content, newDocument.id);
+        editor.scrollToTop();
 
-        canvas.classList.remove(outClass);
-        canvas.classList.add(inClass);
+        editor.applyTransition(outClass, false);
+        editor.applyTransition(inClass, true);
 
-        canvas.offsetHeight;
+        editor.getRootElement().offsetHeight;
 
-        canvas.classList.remove(inClass);
+        editor.applyTransition(inClass, false);
 
         setTimeout(() => {
           animating = false;
-          canvas.focus();
+          editor.focus();
           resolve();
         }, 200);
       }, 150);

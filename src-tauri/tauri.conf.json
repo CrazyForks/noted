@@ -4,7 +4,9 @@
   "version": "0.1.7",
   "identifier": "com.khurram.noted",
   "build": {
-    "frontendDist": "../src"
+    "beforeDevCommand": "npm run build:frontend",
+    "beforeBuildCommand": "npm run build:frontend",
+    "frontendDist": "../dist"
   },
   "app": {
     "withGlobalTauri": true,
