@@ -5,8 +5,13 @@ export function createUpdaterUi({
   Channel
 }) {
   let updateAvailable = null;
+  const currentVersion = '0.1.9';
 
   function bind() {
+    if (updateVersion) {
+      updateVersion.textContent = `v${currentVersion}`;
+    }
+
     updateBtn?.addEventListener('click', async () => {
       if (updateAvailable) {
         try {
@@ -38,7 +43,7 @@ export function createUpdaterUi({
         updateAvailable = metadata;
         updateBtn.textContent = 'Install Update';
         updateBtn.classList.add('install');
-        updateVersion.textContent = metadata.version ? `v${metadata.version}` : 'v0.1.7';
+        updateVersion.textContent = metadata.version ? `v${metadata.version}` : `v${currentVersion}`;
       } else {
         updateAvailable = null;
         updateBtn.textContent = 'Up to date';

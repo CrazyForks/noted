@@ -75,6 +75,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     maximizeButton: document.getElementById('btn-maximize'),
     minimizeButton: document.getElementById('btn-minimize'),
     flushPendingSave: notes.flushPendingSave,
+    invoke,
     status
   });
 

@@ -40,6 +40,9 @@ Swipe left or right with two fingers on the trackpad to move between notes. The 
 
 Press **Super+N** to toggle the window from anywhere.
 
+GNOME and XFCE installs register this automatically when `noted-toggle` is
+available on `PATH`. Other desktops can use the same Wayland-safe setup:
+
 1. Open **Settings → Keyboard → Custom Shortcuts**
 2. Click **+ Add Shortcut**
 3. Set **Name** to `Noted Toggle`
@@ -47,9 +50,9 @@ Press **Super+N** to toggle the window from anywhere.
 5. Set **Shortcut** to **Super+N**
 
 Installed Linux packages include `noted-toggle`, a small DBus toggle script
-that talks to Noted's single-instance service. This works on Wayland because
-the desktop environment owns the global shortcut and the script only asks the
-running app to show or hide its window.
+that talks to Noted's single-instance service. This works on Wayland because the
+desktop environment owns the global shortcut and the script only asks the running
+app to show or hide its window.
 
 ## Install
 
@@ -93,6 +96,35 @@ npm install
 npx tauri dev    # run in development mode
 npx tauri build  # build for distribution
 ```
+
+## Release
+
+Releases are tag-driven. Do not hand-edit `latest.json` for a new release; it
+contains signatures that must match the exact built artifacts. The GitHub
+Actions release workflow builds the installers, signs updater artifacts, uploads
+them to the GitHub release, and generates the release `latest.json`.
+
+Before tagging, bump the app version everywhere and run:
+
+```bash
+npm run validate:release -- --version=v0.1.9
+npm run build:frontend
+cargo check --manifest-path src-tauri/Cargo.toml
+cargo test --manifest-path src-tauri/Cargo.toml
+```
+
+Then publish:
+
+```bash
+git tag v0.1.9
+git push origin main
+git push origin v0.1.9
+```
+
+The repository must have these secrets configured for signed updater artifacts:
+
+- `TAURI_SIGNING_PRIVATE_KEY`
+- `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`
 
 ## Themes
 

@@ -13,4 +13,4 @@ if command -v gdbus >/dev/null 2>&1; then
   fi
 fi
 
-exec noted
+exec noted --toggle "$@"

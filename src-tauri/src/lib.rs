@@ -192,6 +192,17 @@ fn save_theme_file(
     save_theme_json(&paths.themes_dir, &name, &json)
 }
 
+#[tauri::command]
+fn quit_app(app: tauri::AppHandle) {
+    eprintln!("[noted] quit_app invoked");
+    app.exit(0);
+}
+
+#[tauri::command]
+fn debug_log(message: String) {
+    eprintln!("[noted] {message}");
+}
+
 fn save_theme_json(themes_dir: &PathBuf, name: &str, json: &str) -> Result<(), String> {
     validate_theme_payload(&name, &json)?;
     fs::create_dir_all(themes_dir).map_err(|e| e.to_string())?;
@@ -203,6 +214,115 @@ fn save_theme_json(themes_dir: &PathBuf, name: &str, json: &str) -> Result<(), S
         let _ = fs::remove_file(&tmp_path);
         e.to_string()
     })
+}
+
+#[cfg(desktop)]
+fn register_global_hotkey() {
+    if !shortcut_command_available() {
+        return;
+    }
+
+    let desktop = std::env::var("XDG_CURRENT_DESKTOP")
+        .or_else(|_| std::env::var("DESKTOP_SESSION"))
+        .unwrap_or_default()
+        .to_ascii_lowercase();
+
+    if desktop.contains("gnome") || desktop.contains("ubuntu") {
+        register_gnome_global_hotkey();
+    } else if desktop.contains("xfce") {
+        register_xfce_global_hotkey();
+    }
+}
+
+#[cfg(desktop)]
+fn shortcut_command_available() -> bool {
+    use std::process::Command;
+
+    Command::new("sh")
+        .args(["-c", "command -v noted-toggle >/dev/null 2>&1"])
+        .status()
+        .map(|status| status.success())
+        .unwrap_or(false)
+}
+
+#[cfg(desktop)]
+fn register_gnome_global_hotkey() {
+    use std::process::Command;
+
+    let schema = "org.gnome.settings-daemon.plugins.media-keys";
+    let our_path = "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/noted/";
+
+    let output = match Command::new("gsettings")
+        .args(["get", schema, "custom-keybindings"])
+        .output()
+    {
+        Ok(o) => o,
+        Err(_) => return,
+    };
+    if !output.status.success() {
+        return;
+    }
+
+    let existing_str = String::from_utf8_lossy(&output.stdout).to_string();
+
+    let mut paths: Vec<String> = Vec::new();
+    if !existing_str.contains("[]") {
+        let cleaned = existing_str
+            .trim_start_matches("@as []")
+            .trim_start_matches("@a(as) ")
+            .trim_start_matches('[')
+            .trim_end_matches("]\n")
+            .trim_end_matches(']');
+        for part in cleaned.split(", ") {
+            let p = part.trim().trim_matches('\'').to_string();
+            if !p.is_empty() {
+                paths.push(p);
+            }
+        }
+    }
+
+    if !paths.iter().any(|p| p == our_path) {
+        paths.push(our_path.to_string());
+    }
+
+    let list: String = paths
+        .iter()
+        .map(|p| format!("'{}'", p))
+        .collect::<Vec<_>>()
+        .join(", ");
+    let _ = Command::new("gsettings")
+        .args(["set", schema, "custom-keybindings", &format!("[{}]", list)])
+        .status();
+
+    let our_schema = format!("{}.custom-keybinding:{}", schema, our_path);
+    let _ = Command::new("gsettings")
+        .args(["set", &our_schema, "name", "'Noted Toggle'"])
+        .status();
+    let _ = Command::new("gsettings")
+        .args(["set", &our_schema, "command", "'noted-toggle'"])
+        .status();
+    let _ = Command::new("gsettings")
+        .args(["set", &our_schema, "binding", "'<Super>n'"])
+        .status();
+}
+
+#[cfg(desktop)]
+fn register_xfce_global_hotkey() {
+    use std::process::Command;
+
+    let _ = Command::new("xfconf-query")
+        .args([
+            "-c",
+            "xfce4-keyboard-shortcuts",
+            "-p",
+            "/commands/custom/<Super>n",
+            "-n",
+            "-t",
+            "string",
+            "-s",
+            "noted-toggle",
+        ])
+        .status();
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -217,10 +337,12 @@ pub fn run() {
                 .callback(|app, args, _cwd| {
                     if let Some(window) = app.get_webview_window("main") {
                         if args.iter().any(|arg| arg == "--toggle") {
-                            if window.is_visible().unwrap_or(false) {
+                            let visible = window.is_visible().unwrap_or(false);
+                            if visible {
                                 let _ = window.hide();
                             } else {
                                 let _ = window.show();
+                                let _ = window.unminimize();
                                 let _ = window.set_focus();
                             }
                         } else {
@@ -250,6 +372,9 @@ pub fn run() {
             let database = db::Database::new(app_data_dir).expect("failed to initialize database");
             app.manage(database);
             app.manage(AppPaths { themes_dir });
+            #[cfg(desktop)]
+            register_global_hotkey();
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -258,7 +383,9 @@ pub fn run() {
             save_note,
             delete_note,
             list_theme_files,
-            save_theme_file
+            save_theme_file,
+            quit_app,
+            debug_log
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
