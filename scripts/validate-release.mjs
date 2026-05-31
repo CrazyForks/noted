@@ -44,8 +44,8 @@ function validateSourceVersions() {
   assertEqual('src-tauri/Cargo.toml version', extractCargoVersion(), expectedVersion);
   assertEqual('src-tauri/tauri.conf.json version', tauriConfig.version, expectedVersion);
 
-  if (!updaterUi.includes(`const currentVersion = '${expectedVersion}';`)) {
-    fail('src/updater-ui.js currentVersion does not match release version');
+  if (!updaterUi.includes("invoke('get_app_version')")) {
+    fail('src/updater-ui.js does not read the app version from Tauri');
   }
   if (!indexHtml.includes(`id="update-version">v${expectedVersion}</span>`)) {
     fail('src/index.html displayed update version does not match release version');

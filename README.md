@@ -107,7 +107,7 @@ them to the GitHub release, and generates the release `latest.json`.
 Before tagging, bump the app version everywhere and run:
 
 ```bash
-npm run validate:release -- --version=v0.1.9
+npm run validate:release -- --version=v0.2.0
 npm run build:frontend
 cargo check --manifest-path src-tauri/Cargo.toml
 cargo test --manifest-path src-tauri/Cargo.toml
@@ -116,9 +116,9 @@ cargo test --manifest-path src-tauri/Cargo.toml
 Then publish:
 
 ```bash
-git tag v0.1.9
+git tag v0.2.0
 git push origin main
-git push origin v0.1.9
+git push origin v0.2.0
 ```
 
 The repository must have these secrets configured for signed updater artifacts:
