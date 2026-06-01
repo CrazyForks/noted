@@ -11,6 +11,8 @@
   --theme-type-reverse: #fff;
   --theme-accent-main: #a89e94;
   --theme-accent-secondary: #8f857b;
+  --theme-accent-2-main: #b88764;
+  --theme-accent-2-secondary: #9d7150;
   --theme-danger: #c35c51;
   --theme-control-text: #ffffff;
   --theme-grid-superlight: #00000000;
@@ -346,6 +348,45 @@ html, body {
 
 #note-editor .cm-line {
   padding: 0;
+}
+
+#note-editor .checklist-box {
+  width: 13px;
+  height: 13px;
+  margin: 0 7px 0 0;
+  padding: 0;
+  border: 1.5px solid var(--theme-accent-2-main);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--theme-accent-2-main) 7%, transparent);
+  color: var(--theme-control-text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: -2px;
+}
+
+#note-editor .checklist-box:hover {
+  background: color-mix(in srgb, var(--theme-accent-2-main) 18%, transparent);
+}
+
+#note-editor .checklist-box.is-checked {
+  border-color: var(--theme-accent-2-secondary);
+  background: var(--theme-accent-2-secondary);
+}
+
+#note-editor .checklist-box.is-checked::after {
+  content: '';
+  width: 6px;
+  height: 3px;
+  border-left: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg) translate(0, -1px);
+}
+
+#note-editor .checklist-line-checked {
+  color: var(--text-muted);
+  text-decoration: line-through;
 }
 
 #note-editor .cm-cursor {

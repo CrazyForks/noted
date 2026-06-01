@@ -4,8 +4,9 @@ import { ViewPlugin } from '@codemirror/view';
 const MODES = new Set(['list', 'math', 'code']);
 
 export function detectEditorMode(doc) {
-  const firstLine = doc.line(1).text.trim().toLowerCase().replace(/:$/, '');
-  return MODES.has(firstLine) ? firstLine : 'text';
+  const firstLine = doc.line(1).text.trim().toLowerCase();
+  const keyword = firstLine.split(':')[0].trim();
+  return MODES.has(keyword) ? keyword : 'text';
 }
 
 export const activeEditorModeField = StateField.define({

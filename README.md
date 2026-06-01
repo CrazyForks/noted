@@ -170,13 +170,13 @@ The repository must have these secrets configured for signed updater artifacts:
 - [x] Plain-text storage
 - [x] Global hotkey
 - [x] Link shrink
+- [ ] Checklists
+- [ ] Screenshot to text
+- [ ] AutoPaste
 - [ ] Contextual math
 - [ ] Conversions
 - [ ] Reactive variables
-- [ ] Checklists
 - [ ] Timer
-- [ ] Screenshot to text
-- [ ] AutoPaste
 - [ ] One-click export
 
 ## License
