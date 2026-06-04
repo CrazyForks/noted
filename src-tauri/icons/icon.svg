@@ -1,16 +1,27 @@
-<svg width="512" height="512" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-  <!-- rounded square bg -->
-  <rect x="0" y="0" width="300" height="300" rx="60" fill="#1a1a2e"/>
-  <!-- note body -->
-  <polygon points="55,55 210,55 210,235 182,263 55,263" fill="#fffde8"/>
-  <!-- fold -->
-  <polygon points="182,263 210,235 182,235" fill="#d4c9a8"/>
-  <polygon points="182,235 210,235 210,241 184,241" fill="#bfb48f" opacity="0.6"/>
-  <!-- ruled lines -->
-  <line x1="75" y1="105" x2="190" y2="105" stroke="#ddd5b5" stroke-width="2"/>
-  <line x1="75" y1="130" x2="190" y2="130" stroke="#ddd5b5" stroke-width="2"/>
-  <line x1="75" y1="155" x2="190" y2="155" stroke="#ddd5b5" stroke-width="2"/>
-  <line x1="75" y1="180" x2="180" y2="180" stroke="#ddd5b5" stroke-width="2"/>
-  <!-- noted text on paper -->
-  <text x="132" y="163" text-anchor="middle" font-family="'Courier New', Courier, monospace" font-size="36px" font-weight="700" fill="#2a2520" letter-spacing="2px">noted</text>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @font-face {
+        font-family: 'Lora';
+        font-style: italic;
+        font-weight: 400;
+        src: url('data:font/woff2;base64,d09GMgABAAAAAFjkABAAAAAAv2AAAFh/AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGoFUG4GNThyJYAZgP1NUQVREAIUUEQgKgb90gZZRC4Q2AAE2AiQDiGgEIAWETAeKKgwHG3GnJczzxQ3oDgD+lN4Kl5GBYOPANtmwPyIpJ31e9v+fE6TIUZP5iymDLyy47MQQMpHsxBCiM1SUUNGjI41Od9TpL9tYsNSUJal7ueVbH0UOwztd7MIy0PaYzygMnwyvxF8zlbH87p767ri/4t5i4JKuUyJxqbUV9Tk2oKW3uO0Z4E6NnDDJw/Nzr+e+pPkdMypiNYVurIg0KjRueqrgxpzh+bX5/v8XXdw1lRccdQcc3UpJWhi09qyeNXuK2ZsLncPKYaEuFJ1uzilCTz/27Hf3ANk71SRqI1MKQ6qeCSnpl3d5/vkj2rn3zaIzOLvO0N62AmZxYWGYZoEWShyFgS/bP6jNqoBWumkab1yTgMfxiBIiBh6WGAkhumbPe/xyuuvfnMyuT3KZXc/J782Um98XbXPt9+6kEpN3JjyLGyFxIBBYY5cVFsjMD4AC+Ocf8vZj7IZd0g1sOggC597x071KdBrbKlNnPxYsO6yZvOwNO+x7d041AUHXh3Kzku/MNzBDZmCyiLZO15Tunb8SUmfFeZ7Y43nvdahRQ63qWw3J/+XU7OuM3ROQGvmFrQXg4/IfjWKltV0gLUHL9nXmKlkjjRJpYw6gocRLpI1Ph563AbMqL0P/bnOzgSH+jdps/dW7jgGjGqp/b8uyLvtPf9pqtdZlteCA53D2eIzpam2OCILoQpu7/++e7t+/e6hFMyOtRrQwOhhYnFlZZBiN1sCUAe1oDkRLpDMCZubIzpye84ww8gVh6CABIvh+WSWtjFHH/mbT6ATvh1CHUAG2HuKq6dqdeFNRMr7UGo2Mq+1zvXuuzvhR9LrDMpYJWtvyI28AEhZgHgmJcWExJOg/L9RLlppI3lQKxIdZKHxqD6kAXLCKWOFz/uerM35re9NNBBOUzYh5pv3rzrfXp6TXkVHSdkuvEIIRRnjCCCOMMCKER/Y1e4fq+x7QiSurzsYkYIwJdfhjTCThjmNsWOm2j0iDrDsE47UkwMyApoB7cGA8NBDYJJNBUKDwfzvWCYylGl4IETPGJjnLMjrZJFAOFiyHcsix4uQEXjlFvlyoUh6rVq7XLLdqldtNJNHKwT4ZhQQEoZAxEK6OBJEoHV+gN6BxBMGRPxuVYKgOC+HiABLyow0BGkoxGzL73VwRAl9N6h6C6k1Z7xhYUABliQAyqM9LgzCcRO/90IUHjh4z+fseC7q3dUddMmANB+RIBxBOlasaVl4D4LVTSDCccsKSvIDvTV+NBC9aqFD+jDRkBFggb7NZQJbOOiD7pwvI3r4DOTAAhHfpBZCp/f+qpu9L45nIJAECULUtRW213kqLzTXRaENvqT+T+2SBmYgIZyGDbyN3uYGAvIZvqIUo/uX8Xa4BznshKdtgXaG8wBXwFPnkn9lI9vuLnu4h4I4Xu+qSC9/tzI7twHZv2zaerLEsFvjOjHs3bRPXsnruqF6pfJlSJIydi1zwrNNzpJoE8DBejARAViC78G/5a3rVC4/dd9Ogn2ffdWr+SPva1RbrrbJk+3xAOlV3UxpfU6hVqdgUuTk9b3Hb7YUXmDldikSROdEiFKipoz4Mb4F4O08edsi7XgfEc3/0nCdwyIAd5c2AuO0KF5n7iH6ACDQ8wocEvw8V/j+zAAOC2allTsdyChZl7LcIATsY3n4wctunHd86GhxbL2RMSsK0IpHUA6YPXV1RsnaEYQawOat7VsK0zvd82bWQSf/frH29UbZ1+xj2sGM66Z5VWQpwMP8Ca1OPVmhiSqGFjHCU/NzZD/cXbXp5CRxlpb2Is/8waw8mv7tmoI+gk79bpwyEXTNVkqb0mrL1ysb1pAbgilW... (line truncated to 2000 chars)
+      }
+    </style>
+  </defs>
+
+  <!-- Full-bleed dark badge: fills entire 512×512 canvas -->
+  <rect x="0" y="0" width="512" height="512" rx="108" ry="108" fill="#181512"/>
+
+  <text
+    x="274"
+    y="238"
+    text-anchor="middle"
+    dominant-baseline="central"
+    font-family="'Lora', 'Georgia', 'Times New Roman', serif"
+    font-style="italic"
+    font-size="225"
+    font-weight="400"
+    fill="#E8601C"
+  >n.</text>
 </svg>

@@ -199,13 +199,7 @@ fn save_theme_file(
 
 #[tauri::command]
 fn quit_app(app: tauri::AppHandle) {
-    eprintln!("[noted] quit_app invoked");
     app.exit(0);
-}
-
-#[tauri::command]
-fn debug_log(message: String) {
-    eprintln!("[noted] {message}");
 }
 
 fn save_theme_json(themes_dir: &PathBuf, name: &str, json: &str) -> Result<(), String> {
@@ -390,8 +384,7 @@ pub fn run() {
             get_app_version,
             list_theme_files,
             save_theme_file,
-            quit_app,
-            debug_log
+            quit_app
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
